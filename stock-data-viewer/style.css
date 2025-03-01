@@ -1,0 +1,242 @@
+body {
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.company-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.company-list .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.company-list .list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.company-list .list-group-item.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s, background-color 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    font-weight: bold;
+}
+
+#stockChart, #comparisonChart {
+    min-height: 400px;
+}
+
+.stat-card {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.positive {
+    color: #28a745;
+}
+
+.negative {
+    color: #dc3545;
+}
+
+.favorite-icon {
+    color: #ffc107;
+    cursor: pointer;
+}
+
+.favorite-icon.inactive {
+    color: #ccc;
+}
+
+.tooltip-inner {
+    max-width: 200px;
+    padding: 8px;
+    background-color: #333;
+}
+
+.chart-type-selector button {
+    border-radius: 0;
+}
+
+.chart-type-selector button.active {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.slide-in {
+    animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Loading Spinner */
+.spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.card {
+    position: relative;
+}
+
+/* Dark Mode Styles */
+.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.dark-mode .card {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-color: #333;
+}
+
+.dark-mode .list-group-item {
+    background-color: #333;
+    color: #ffffff;
+    border-color: #444;
+}
+
+.dark-mode .list-group-item:hover {
+    background-color: #444;
+}
+
+.dark-mode .list-group-item.active {
+    background-color: #0d6efd;
+}
+
+.dark-mode .navbar {
+    background-color: #222 !important;
+}
+
+.dark-mode .card-header {
+    background-color: #333 !important;
+    color: #ffffff !important;
+}
+
+.dark-mode .modal-content {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.dark-mode .btn-close {
+    filter: invert(1);
+}
+
+.dark-mode .form-control {
+    background-color: #333;
+    color: #fff;
+    border-color: #444;
+}
+
+.dark-mode .form-control:focus {
+    background-color: #333;
+    color: #fff;
+}
+
+.dark-mode .dropdown-menu {
+    background-color: #333;
+}
+
+.dark-mode .dropdown-item {
+    color: #fff;
+}
+
+.dark-mode .dropdown-item:hover {
+    background-color: #444;
+}
+
+.dark-mode .spinner-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.dark-mode .tooltip-inner {
+    background-color: #222;
+}
+
+/* Custom scrollbar for dark mode */
+.dark-mode::-webkit-scrollbar {
+    width: 10px;
+}
+
+.dark-mode::-webkit-scrollbar-track {
+    background: #333;
+}
+
+.dark-mode::-webkit-scrollbar-thumb {
+    background: #555;
+}
+/* ✅ Ensure statistics text is visible in dark mode */
+.dark-mode .stat-value {
+    color: #ffffff !important;  /* Bright white text */
+}
+
+.dark-mode .stat-label {
+    color: #bbbbbb !important;  /* Light gray labels */
+}
+
+.dark-mode .stat-card {
+    background-color: #222 !important;  /* Dark background for stats */
+    border-color: #333 !important;
+}
+/* ✅ Ensure plus values are green in dark mode */
+.dark-mode .stat-value.positive {
+    color: limegreen !important;
+}
+
+/* ✅ Ensure negative values remain red */
+.dark-mode .stat-value.negative {
+    color: red !important;
+}
