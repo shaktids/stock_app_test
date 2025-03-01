@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Index Analyzer</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css"> <!-- If in a subfolder: href="css/styles.css" -->
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fas fa-chart-line me-2"></i>Stock Index Analyzer
+            </span>
+            <div class="d-flex align-items-center">
+                <div class="form-check form-switch me-3">
+                    <input class="form-check-input" type="checkbox" id="darkModeToggle">
+                    <label class="form-check-label text-white" for="darkModeToggle">
+                        <i id="themeIcon" class="fas fa-moon"></i>
+                    </label>
+                </div>
+                <button class="btn btn-outline-light" id="aboutBtn" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search indices...">
+                    <button class="btn btn-primary" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-end">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary" id="view1Y">1Y</button>
+                        <button type="button" class="btn btn-outline-primary" id="view3Y">3Y</button>
+                        <button type="button" class="btn btn-outline-primary active" id="viewAll">All</button>
+                    </div>
+                    <button class="btn btn-success ms-2" id="compareBtn">
+                        <i class="fas fa-plus"></i> Compare
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Index List Panel -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Indices</span>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="favoriteFilter">
+                                <label class="form-check-label text-white" for="favoriteFilter">
+                                    <i class="fas fa-star"></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group company-list" id="companyList" aria-label="List of Indices">
+                            <!-- Indices will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        Statistics
+                    </div>
+                    <div class="card-body" id="statsPanel">
+                        <p class="text-center text-muted">Select an index to view statistics</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Panel -->
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span id="selectedCompany">Select an index</span>
+                            <div>
+                                <button class="btn btn-sm btn-outline-light me-2" id="downloadCSV">
+                                    <i class="fas fa-download"></i> CSV
+                                </button>
+                                <button class="btn btn-sm btn-outline-light me-2" id="downloadChart">
+                                    <i class="fas fa-image"></i> Chart
+                                </button>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item chart-type" data-type="line" href="#">Line Chart</a></li>
+                                        <li><a class="dropdown-item chart-type" data-type="bar" href="#">Bar Chart</a></li>
+                                        <li><a class="dropdown-item chart-type" data-type="candlestick" href="#">Candlestick</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card mt-3" id="comparisonCard" style="display: none;">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Performance Comparison</span>
+                            <button class="btn btn-sm btn-outline-light" id="clearCompare">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    
+    <!-- FileSaver.js for downloading files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script type="module" src="script.js"> <!-- If in a subfolder: src="js/script.js" --> </script>
+</body>
+</html>
