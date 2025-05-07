@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stock Index Dashboard</title>
+  <!-- 
+| Section        | Purpose                                                                           |
+| -------------- | --------------------------------------------------------------------------------- |
+| `Papa.parse()` | Loads and parses the CSV file (`dump.csv`) on page load.                          |
+| `indexData`    | Stores all CSV rows grouped by `index_name`.                                      |
+| Sidebar List   | Created dynamically from the unique company names in the CSV.                     |
+| `drawChart()`  | Extracts `index_date` and `closing_index_value` to plot using Chart.js.           |
+| Chart.js       | Displays a smooth line chart that updates dynamically when a company is selected. |
+ -->
+
+  <!-- Bootstrap CSS for responsive layout -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  
+  <!-- Chart.js for rendering graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- PapaParse to parse CSV files -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+
+  <style>
+    /* Make the page full-height and prevent body scrolling */
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Create two-panel flex layout */
+    .main {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Left: Scrollable sidebar list of companies */
+    .sidebar {
+      width: 25%;
+      overflow-y: auto;
+      padding: 10px;
+      border-right: 1px solid #ccc;
+      background-color: #f0f0f0;
+    }
+
+    /* Right: Fixed chart panel */
+    .chart-panel {
+      width: 75%;
+      position: fixed;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+
+    /* Chart canvas styling */
+    canvas {
+      max-height: 90vh;
+      width: 100%;
+    }
+
+    .list-group-item {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="main">
+  <!-- Sidebar: List of index names -->
+  <div class="sidebar">
+    <h5>📋 Index List</h5>
+    <ul id="indexList" class="list-group"></ul>
+  </div>
+
+  <!-- Fixed Chart Panel -->
+  <div class="chart-panel">
+    <canvas id="indexChart"></canvas>
+  </div>
+</div>
+
+<script>
+  let indexData = {};         // Stores grouped data by index_name
+  let chartInstance = null;   // Reference to Chart.js chart so we can destroy/update it
+
+  // Load and parse dump.csv using PapaParse
+  Papa.parse("dump.csv", {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      // Group data by "index_name"
+      results.data.forEach(row => {
+        const name = row["index_name"];
+        if (!indexData[name]) indexData[name] = [];
+        indexData[name].push(row);
+      });
+
+      // Populate company list in the sidebar
+      const list = document.getElementById("indexList");
+      Object.keys(indexData).forEach(name => {
+        const li = document.createElement("li");
+        li.className = "list-group-item";
+        li.textContent = name;
+
+        // On click, render chart for that company
+        li.onclick = () => drawChart(name);
+        list.appendChild(li);
+      });
+    }
+  });
+
+  // Function to draw line chart based on selected company
+  function drawChart(name) {
+    const records = indexData[name];
+
+    // Extract dates and closing values
+    const labels = records.map(r => r["index_date"]);
+    const values = records.map(r => parseFloat(r["closing_index_value"]));
+
+    // Chart.js data structure
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: `${name} - Closing Index`,
+        data: values,
+        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        fill: true,
+        tension: 0.4
+      }]
+    };
+
+    // Chart.js config
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: `📈 ${name} - Closing Index Over Time`
+          }
+        },
+        scales: {
+          x: { title: { display: true, text: "Date" } },
+          y: { title: { display: true, text: "Closing Value" } }
+        }
+      }
+    };
+
+    // If chart already exists, destroy it first to avoid memory leaks
+    if (chartInstance) chartInstance.destroy();
+
+    // Create new chart
+    const ctx = document.getElementById("indexChart").getContext("2d");
+    chartInstance = new Chart(ctx, config);
+  }
+</script>
+
+</body>
+</html>
